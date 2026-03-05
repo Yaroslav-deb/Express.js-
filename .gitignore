@@ -1,0 +1,13 @@
+# Залежності
+node_modules/
+
+# Логи
+npm-debug.log
+yarn-error.log
+
+# Файли середовища (на майбутнє)
+.env
+
+# Системні файли ОС
+.DS_Store
+Thumbs.db
