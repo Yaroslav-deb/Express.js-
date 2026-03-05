@@ -3,7 +3,6 @@ import express from 'express';
 const app = express();
 const PORT = 3000;
 
-// Base: Фіктивні дані (hardcoded JSON у пам'яті) [cite: 81]
 const events = [
     { id: 1, title: "Конференція розробників", description: "Основи Node.js", date: "2023-11-15", organizer: "IT Hub" },
     { id: 2, title: "Майстер-клас з HTTP", description: "Створення базового сервера", date: "2023-11-20", organizer: "Tech Academy" },
@@ -12,19 +11,15 @@ const events = [
     { id: 5, title: "Бази даних", description: "Основи SQL", date: "2024-01-20", organizer: "Data Pros" }
 ];
 
-// Middle: Middleware для логування часу запиту [cite: 84]
 app.use((req, res, next) => {
     const requestTime = new Date().toISOString();
     console.log(`[${requestTime}] Отримано запит: ${req.method} ${req.url}`);
     next();
 });
 
-// Base: Маршрут GET /events [cite: 81]
 app.get('/events', (req, res) => {
-    // Middle & Advanced: Отримуємо Query-параметри [cite: 83, 86]
     let { page = 1, limit = 10, sort, order = 'asc' } = req.query;
 
-    // Advanced: Валідація Query-параметрів [cite: 87]
     page = parseInt(page);
     limit = parseInt(limit);
 
@@ -35,10 +30,8 @@ app.get('/events', (req, res) => {
         return res.status(400).json({ error: "Параметр limit повинен бути числом >= 1" });
     }
 
-    // Копіюємо масив для безпечної роботи
     let resultEvents = [...events];
 
-    // Advanced: Сортування даних за датою або назвою [cite: 86]
     if (sort === 'date' || sort === 'title') {
         resultEvents.sort((a, b) => {
             if (a[sort] < b[sort]) return order === 'desc' ? 1 : -1;
@@ -47,12 +40,10 @@ app.get('/events', (req, res) => {
         });
     }
 
-    // Middle: Пагінація [cite: 83]
     const startIndex = (page - 1) * limit;
     const endIndex = page * limit;
     const paginatedEvents = resultEvents.slice(startIndex, endIndex);
 
-    // Повертаємо результат
     res.json({
         total: resultEvents.length,
         page,
