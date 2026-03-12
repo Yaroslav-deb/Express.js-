@@ -5,7 +5,7 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-# Файли середовища (на майбутнє)
+# Файли середовища
 .env
 
 # Системні файли ОС
