@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { Event, Participant } from './models.js';
+import { Event, Participant, User } from './models.js';
 
 dotenv.config();
 
@@ -11,6 +11,7 @@ async function seedDB() {
         
         await Event.deleteMany({});
         await Participant.deleteMany({});
+        await User.deleteMany({});
 
         const events = await Event.insertMany([
             { title: "Конференція розробників", description: "Основи Node.js", date: "2023-11-15", organizer: "IT Hub" },
