@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 import { Event, Participant, User } from './models.js';
 
 dotenv.config();
@@ -7,31 +8,29 @@ dotenv.config();
 async function seedDB() {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log('Підключено до MongoDB. Очищення бази...');
-        
+        console.log('Очищення бази...');
         await Event.deleteMany({});
         await Participant.deleteMany({});
         await User.deleteMany({});
 
+        const hashedPassword = await bcrypt.hash('123', 10);
+        const adminUser = await User.create({ email: 'admin@mail.com', password: hashedPassword, role: 'Admin' });
+
         const events = await Event.insertMany([
-            { title: "Конференція розробників", description: "Основи Node.js", date: "2023-11-15", organizer: "IT Hub" },
-            { title: "Майстер-клас з HTTP", description: "Створення базового сервера", date: "2023-11-20", organizer: "Tech Academy" },
-            { title: "Express.js для початківців", description: "Роутинг та Middleware", date: "2023-12-05", organizer: "Code School" },
-            { title: "Просунутий Node", description: "Потоки (Streams)", date: "2023-10-10", organizer: "IT Hub" },
-            { title: "Бази даних", description: "Основи SQL", date: "2024-01-20", organizer: "Data Pros" }
+            { title: "Конференція розробників", description: "Основи", date: "20.03.2026", organizer: "IT Hub", creator: adminUser._id },
+            { title: "GraphQL Майстер-клас", description: "Створення API", date: "01.03.2026", organizer: "Academy", creator: adminUser._id }
         ]);
 
         await Participant.insertMany([
-            { name: "Іван Іванов", email: "ivan@example.com", eventId: events[0]._id },
-            { name: "Олена Петрівна", email: "olena@example.com", eventId: events[0]._id }
+            { name: "Панченко Ярослав", email: "introvergest@gmail.com", eventId: events[0]._id },
+            { name: "Кузін Богдан", email: "bogdan@example.com", eventId: events[0]._id }
         ]);
 
         console.log('Базу даних успішно наповнено!');
         process.exit(0);
     } catch (error) {
-        console.error('Помилка Seed-скрипта:', error);
+        console.error('Помилка:', error);
         process.exit(1);
     }
 }
-
 seedDB();
